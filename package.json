@@ -1,0 +1,25 @@
+{
+  "name": "trabalho2-webii",
+  "version": "1.0.0",
+  "description": "Trabalho II da disciplina de WEB II",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnaMasFlaviaMoraes/trabalho2-webII.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnaMasFlaviaMoraes/trabalho2-webII/issues"
+  },
+  "homepage": "https://github.com/AnaMasFlaviaMoraes/trabalho2-webII#readme",
+  "dependencies": {
+    "better-sqlite3": "^11.9.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
+}
