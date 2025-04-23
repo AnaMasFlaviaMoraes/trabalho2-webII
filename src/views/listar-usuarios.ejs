@@ -44,7 +44,7 @@
                     <td><%= user.telefones.find(t => t.principal)?.numero || '-' %></td>
                     <td><%= user.emails.find(e => e.principal)?.endereco || '-' %></td>
                     <td class="actions">
-                        <a href="/updateUser/<%= user.id %>" class="edit">
+                        <a href="/user/<%= user.id %>/edit" class="edit">
                             <i class="fas fa-pen fa-xs"></i>
                         </a>
                         <a href="javascript:void(0)" class="trash" onclick="openModal('<%= user.id %>', '<%= user.username %>')">
@@ -69,7 +69,7 @@
             <p id="userToDelete"></p>
 
             <div class="modal-buttons">
-                <form id="deleteForm" method="POST">
+                <form id="deleteForm" method="post">
                     <button type="submit" class="confirm">Sim, excluir</button>
                 </form>
                 <button class="cancel" onclick="closeModal()">Cancelar</button>

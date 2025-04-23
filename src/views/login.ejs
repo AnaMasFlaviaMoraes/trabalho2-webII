@@ -12,11 +12,50 @@
         
         <h2 class="login-header">Log in</h2>
       
-        <form class="login-container">
-          <p><input type="cpf" placeholder="CPF"></p>
-          <p><input type="password" placeholder="Password"></p>
+        <form class="login-container" action="/login" method="POST">
+          <label for="cpf">CPF:</label>
+          <p><input type="cpf" placeholder="000.000.000-00" name="cpf" oninput="maskCPF(this)"></p>
+          <label for="senha">Senha:</label>
+          <p><input type="password" placeholder="Password" name="senha"></p>
           <p><input type="submit" value="Entrar"></p>
         </form>
+    </div>
+    <% if (failed) { %>
+      <div id="failedLoginModal" class="modal" style="display: flex;">
+          <div class="modal-content">
+              <p><%= error %></p>
+              <div class="modal-buttons">
+                  <button class="cancel" onclick="closeModal()">Fechar</button>
+              </div>
+          </div>
       </div>
+  <% } %>
+
+    <script>
+      function maskCPF(input) {
+        let value = input.value.replace(/\D/g, ''); // remove tudo que não é número
+        value = value.slice(0, 11); // limita a 11 dígitos
+
+        value = value
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+        input.value = value;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const cpfInput = document.querySelector('input[name="cpf"]');
+        if (cpfInput) {
+            cpfInput.addEventListener('input', () => maskCPF(cpfInput));
+        }
+      });
+
+      function closeModal() {
+        const modal = document.getElementById('failedLoginModal');
+        modal.style.display = 'none';
+      }
+
+    </script>
 </body>
 </html>

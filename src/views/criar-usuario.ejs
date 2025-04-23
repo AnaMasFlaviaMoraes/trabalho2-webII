@@ -34,7 +34,7 @@
                 <div class="item">
                     <input type="text" name="telefones[0].numero" placeholder="(00) 90000-0000" required>
                     <label class="check">
-                        <input type="radio" name="telefonePrincipal" value="0"> Principal
+                        <input type="radio" name="telefonePrincipal" checked> Principal
                     </label>
                 </div>
                 <button type="button" onclick="addTelefone()">Adicionar Telefone</button>
@@ -45,7 +45,7 @@
                 <div class="item">
                     <input type="email" name="emails[0].endereco" placeholder="fulano@email.com" required>
                     <label class="check">
-                        <input type="radio" name="emailPrincipal" value="0"> Principal
+                        <input type="radio" name="emailPrincipal" checked> Principal
                     </label>
                 </div>
                 <button type="button" onclick="addEmail()">Adicionar Email</button>
@@ -96,7 +96,7 @@
             item.remove();
         }
 
-        function maskCPF(input) {
+    function maskCPF(input) {
         let value = input.value.replace(/\D/g, ''); // remove tudo que não é número
         value = value.slice(0, 11); // limita a 11 dígitos
 
