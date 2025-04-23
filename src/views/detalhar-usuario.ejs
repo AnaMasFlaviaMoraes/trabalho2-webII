@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes Usuário</title>
+    <link rel="stylesheet" href="/css/detalhes.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <h1>Detalhes Usuário</h1>
+        </div>
+        <div class="navbar-right">
+            <a href="/logout" class="logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <label>Nome:</label>
+        <input type="text" name="nome" value="<%= user.nome %>" readonly>
+        <label>Username:</label>
+        <input type="text" name="username" value="<%= user.username %>" readonly>
+        <label>CPF:</label>
+        <input type="text" value="<%= user.cpf %>" readonly>
+        <label>Perfil:</label>
+        <input type="text" value="<%= user.perfil %>" readonly>
+        <div class="multi-field" id="telefonesContainer">
+            <h3>Telefones</h3>
+            <% user.telefones.forEach(function(tel, i) { %>
+                <div class="item">
+                    <input type="text" name="telefones[<%= i %>].numero" value="<%= tel.numero %>" readonly>
+                    <% if (tel.principal) { %>
+                        <label class="check">
+                            <input type="radio" name="telefonePrincipal" value="<%= i %>" checked> Principal
+                        </label>
+                    <% } %>
+                </div>
+            <% }) %>
+        </div>
+        <div class="multi-field" id="emailsContainer">
+            <h3>E-mails</h3>
+            <% user.emails.forEach(function(email, i) { %>
+                <div class="item">
+                    <input type="email" name="emails[<%= i %>].endereco" value="<%= email.endereco %>" required>
+                    <% if (email.principal) { %>
+                        <label class="check">
+                            <input type="radio" name="emailPrincipal" value="<%= i %>" <%= email.principal ? 'checked' : '' %>> Principal
+                        </label>
+                    <% } %>
+                </div>
+            <% }) %>
+        </div>
+        <div class="action-buttons">
+            <a href="/home" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+            <a href="/editUser<%= user.id %>" class="btn editar"><i class="fas fa-edit"></i> Editar</a>
+            <button class="btn excluir" onclick="openUserModal('<%= user.id %>', '<%= user.nome %>')">
+                <i class="fas fa-trash"></i> Excluir
+            </button>
+        </div>
+        
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <p id="modalMessage"></p>
+            <p id="itemToDelete"></p>
+            <div class="modal-buttons">
+            <form id="deleteForm" method="POST" style="display: none;">
+                <button type="submit" class="confirm">Sim, excluir</button>
+            </form>
+            <button id="confirmRemoveBtn" class="confirm">Sim, remover</button>
+            <button class="cancel" onclick="closeModal()">Cancelar</button>
+        </div>
+    </div>
+  </div>
+
+  <script>
+
+    function openUserModal(userId, nome) {
+        const modal = document.getElementById('deleteModal');
+        const form = document.getElementById('deleteForm');
+        const itemToDelete = document.getElementById('itemToDelete');
+        const msg = document.getElementById('modalMessage');
+
+        form.action = `/deleteUser/${userId}`;
+        itemToDelete.textContent = `Nome: ${nome}`;
+        modal.style.display = 'flex';
+        msg.textContent = "Tem certeza que deseja excluir este usuário?";
+        form.style.display = 'none';
+        confirmRemoveBtn.style.display = 'inline-block';
+        modal.style.display = 'flex';
+    }
+    
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+    
+    window.onclick = function(event) {
+        const modal = document.getElementById('deleteModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    
+
+    function maskTelefone(input) {
+        let value = input.value.replace(/\D/g, ''); 
+        value = value.slice(0, 11); 
+
+        value = value
+            .replace(/^(\d{2})(\d)/, '($1) $2')  
+            .replace(/(\d{5})(\d)/, '$1-$2');   
+
+        input.value = value;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('input[name^="telefones"]').forEach(input => {
+            input.addEventListener('input', () => maskTelefone(input));
+        });
+    });
+
+    </script>
+    
+</body>
+</html>
