@@ -8,7 +8,7 @@ const user = {
     nome: 'João Silva',
     username: 'joaosilva',
     cpf: '123.456.789-00',
-    perfil: 'CLIENTE',
+    perfil: 'admin',
     telefones: [
         { numero: '(11) 91234-5678', principal: true },
         { numero: '(11) 97654-3210', principal: false }
@@ -94,15 +94,36 @@ module.exports = {
   getUserDetails: async (req, res) => {
     const userId = req.params.id;
     // Buscar detalhes do usuário
-
-    res.render('detalhar-usuario', { user });
+    const loggedUser = req.session.user;
+    console.log("Usuário logado: ", loggedUser);
+    console.log("id:", userId);
+    //user depois de pegar o userId e pegar um usuário no banco!!
+    res.render('detalhar-usuario', { user, loggedUser, userId });
   },
 
   showUpdateUserPage: async (req, res) => {
     const userId = req.params.id;
     const currentUser = req.session.user;
+
+    const user = {
+      id: 5,
+      nome: 'Maria Oliveira',
+      username: 'mariaoliveira',
+      cpf: '999-888-777-66',
+      perfil: 'cliente',
+      telefones: [
+          { numero: '(11) 91234-5678', principal: true },
+          { numero: '(11) 97654-3210', principal: false }
+      ],
+      emails: [
+          { endereco: 'joao@email.com', principal: true },
+          { endereco: 'jsilva@outra.com', principal: false }
+      ]
+  };
+
     // Verificar permissões e renderizar página de atualizar usuário
-    res.render('editar-usuario', { user });
+    const loggedUser = req.session.user;
+    res.render('editar-usuario', { user, loggedUser, userId });
   },
   // POST /updateUser/:id
   updateUser: async (req, res) => {

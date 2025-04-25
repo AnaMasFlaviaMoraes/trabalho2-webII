@@ -54,9 +54,15 @@
             <% }) %>
         </div>
         <div class="action-buttons">
-            <a href="/users" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
-            <a href="/user/<%= user.id %>/edit" class="btn editar"><i class="fas fa-edit"></i> Editar</a>
-            <button class="btn excluir" onclick="openUserModal('<%= user.id %>', '<%= user.nome %>')">
+            <% 
+                const isAdmin   = loggedUser.perfil === 'admin';
+                const isSelf    = loggedUser.id === userId;
+                const canEdit   = isAdmin || isSelf;
+                const canDelete = isAdmin && (user.perfil !== 'admin' || isSelf);
+            %>
+            <a href="/users" class="btn voltar <%= user.perfil %>"><i class="fas fa-arrow-left"></i> Voltar</a>
+            <a href="/user/<%= user.id %>/edit" class="btn editar <%= canEdit ? '' : 'disabled' %>"><i class="fas fa-edit"></i> Editar</a>
+            <button class="btn excluir <%= canDelete ? '' : 'disabled' %>" onclick="openUserModal('<%= user.id %>', '<%= user.nome %>')">
                 <i class="fas fa-trash"></i> Excluir
             </button>
         </div>

@@ -63,7 +63,7 @@
                         <a href="/user/<%= user.id %>/edit" class="edit <%= canEdit ? '' : 'disabled' %>">
                             <i class="fas fa-pen fa-xs"></i>
                         </a>
-                        <a href="javascript:void(0)" class="trash <%= canDelete ? '' : 'disabled' %>" onclick="openModal('<%= user.id %>', '<%= user.username %>')">
+                        <a href="javascript:void(0)" class="trash <%= canDelete ? '' : 'disabled' %>" onclick="event.stopPropagation(); openModal('<%= user.id %>', '<%= user.username %>')">
                             <i class="fas fa-trash fa-xs"></i>
                         </a>
                     </td>
