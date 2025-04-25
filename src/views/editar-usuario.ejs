@@ -62,6 +62,12 @@
 
             <button type="submit">Salvar Alterações</button>
         </form>
+        <div class="action-buttons">
+            <a href="/users" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+            <button class="btn excluir" onclick="openUserModal('<%= user.id %>', '<%= user.nome %>')">
+                <i class="fas fa-trash"></i> Excluir
+            </button>
+        </div>
     </div>
 
     <!-- Modal de confirmação -->
@@ -178,6 +184,21 @@
             input.addEventListener('input', () => maskTelefone(input));
         });
     });
+
+    function openUserModal(userId, nome) {
+        const modal = document.getElementById('deleteModal');
+        const form = document.getElementById('deleteForm');
+        const itemToDelete = document.getElementById('itemToDelete');
+        const msg = document.getElementById('modalMessage');
+
+        form.action = `/deleteUser/${userId}`;
+        itemToDelete.textContent = `Nome: ${nome}`;
+        modal.style.display = 'flex';
+        msg.textContent = "Tem certeza que deseja excluir este usuário?";
+        form.style.display = 'none';
+        confirmRemoveBtn.style.display = 'inline-block';
+        modal.style.display = 'flex';
+    }
 
     </script>
     

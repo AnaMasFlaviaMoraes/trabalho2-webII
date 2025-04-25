@@ -18,10 +18,20 @@
             </a>
         </div>
     </div>
-
     <div class="content read">
         <h2>Lista de usuários</h2>
-        <a href="/addUser" class="create-contact">Novo Usuário</a>
+        <div class="container">
+            <a href="/addUser" class="create-contact">Novo Usuário</a>
+            <div class="wrap">
+                <form action="/users" method="GET" class="search">
+                  <input type="text" class="searchTerm" placeholder="Pesquisar por nome" name="searchNome">
+                  <button type="submit" class="searchButton">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </form>
+            </div> 
+        </div>
+        
         <table>
             <thead>
                 <tr>
@@ -36,7 +46,13 @@
             </thead>
             <tbody>
                 <% users.forEach((user, index) => { %>
-                <tr>
+                    <% 
+                        const isAdmin   = loggedUser.perfil === 'admin';
+                        const isSelf    = loggedUser.id === user.id;
+                        const canEdit   = isAdmin || isSelf;
+                        const canDelete = isAdmin && (user.perfil !== 'admin' || isSelf);
+                    %>
+                <tr onclick="location.href='/user/<%= user.id %>'" style="cursor: pointer;">
                     <td><%= index + 1 %></td>
                     <td><%= user.nome %></td>
                     <td><%= user.username %></td>
@@ -44,10 +60,10 @@
                     <td><%= user.telefones.find(t => t.principal)?.numero || '-' %></td>
                     <td><%= user.emails.find(e => e.principal)?.endereco || '-' %></td>
                     <td class="actions">
-                        <a href="/user/<%= user.id %>/edit" class="edit">
+                        <a href="/user/<%= user.id %>/edit" class="edit <%= canEdit ? '' : 'disabled' %>">
                             <i class="fas fa-pen fa-xs"></i>
                         </a>
-                        <a href="javascript:void(0)" class="trash" onclick="openModal('<%= user.id %>', '<%= user.username %>')">
+                        <a href="javascript:void(0)" class="trash <%= canDelete ? '' : 'disabled' %>" onclick="openModal('<%= user.id %>', '<%= user.username %>')">
                             <i class="fas fa-trash fa-xs"></i>
                         </a>
                     </td>

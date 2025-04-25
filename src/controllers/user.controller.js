@@ -62,6 +62,8 @@ module.exports = {
   listUsers: async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const filter = req.query.filter || '';
+    const { searchNome } = req.query;
+    console.log("Nome a ser pesquisado: ", searchNome);
     // Buscar usuários com paginação e filtro
 
     const users = [
@@ -83,7 +85,9 @@ module.exports = {
         }
     ];
 
-    res.render('listar-usuarios', { users: users, page, filter });
+    const loggedUser = req.session.user;
+
+    res.render('listar-usuarios', { users: users, page, filter, loggedUser });
   },
 
   // GET /user/:id

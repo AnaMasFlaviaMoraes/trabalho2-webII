@@ -130,3 +130,7 @@ body {
   border-radius: 6px;
   cursor: pointer;
 }
+
+label{
+  padding: 12px;
+}
