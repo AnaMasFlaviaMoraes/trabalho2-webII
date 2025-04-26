@@ -9,7 +9,7 @@ db.exec(`
         cpf TEXT PRIMARY KEY UNIQUE,
         name TEXT NOT NULL,
         password TEXT NOT NULL,
-        role CHECK(role IN('ADMIN', 'CLIENT')) NOT NULL
+        role CHECK(role IN ('ADMIN', 'CLIENT')) NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS telephone (
@@ -23,6 +23,8 @@ db.exec(`
         is_principal BOOLEAN NOT NULL,
         cpf_user TEXT NOT NULL REFERENCES users
     );
+   
 `);
 
 module.exports = { db }
+

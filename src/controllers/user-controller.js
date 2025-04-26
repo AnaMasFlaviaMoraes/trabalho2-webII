@@ -1,6 +1,8 @@
 const { UserDao } = require("../models/user-dao")
 const { User } = require("../models/user-model")
 
+const session = require('express-session');
+
 function list(req, res) {
 }
 
@@ -12,7 +14,7 @@ function login(req, res) {
 
 }
 
-async function register(req, res) {
+async function addUser(req, res) {
     // inicio
     const user = User.instanceRow(req.body)
     const userDao = new UserDao()
@@ -43,7 +45,7 @@ module.exports = {
     list,
     update,
     login,
-    register,
+    addUser,
     details
 
 }

@@ -116,10 +116,13 @@ button[type="submit"] {
     background-color: #0275d8;
     color: white;
     padding: 10px 20px;
-    margin-top: 20px;
+    margin-top: 50px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    width: 300px;
+    position:relative;
+    left: 30%;
 }
 
 button[type="submit"]:hover {
@@ -172,4 +175,29 @@ button[type="submit"]:hover {
     border-radius: 6px;
     cursor: pointer;
   }
-  
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+    justify-content: flex-end;
+    padding-top: 30px;
+  }
+
+  .voltar {
+    background-color: #6c757d;
+  }
+
+  .excluir {
+    background-color: #dc3545;
+}
+
+.btn {
+    padding: 10px 15px;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+}

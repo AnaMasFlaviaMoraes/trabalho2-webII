@@ -54,8 +54,8 @@
             <% }) %>
         </div>
         <div class="action-buttons">
-            <a href="/home" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
-            <a href="/editUser<%= user.id %>" class="btn editar"><i class="fas fa-edit"></i> Editar</a>
+            <a href="/users" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+            <a href="/user/<%= user.id %>/edit" class="btn editar"><i class="fas fa-edit"></i> Editar</a>
             <button class="btn excluir" onclick="openUserModal('<%= user.id %>', '<%= user.nome %>')">
                 <i class="fas fa-trash"></i> Excluir
             </button>
