@@ -7,17 +7,21 @@ class PhoneDao {
         return stmt.all(cpf_user)
     }
 
-    getPhonePrincipal(cpf_user){
-        const stmt = db.prepare(`SELECT * FROM phone WHERE cpf_user = ? and is_principal = true`)
+    async getPhonePrincipal(cpf_user){
+        const stmt = db.prepare(`SELECT * FROM phone WHERE cpf_user = ? and is_principal = 'true'`)
         return stmt.get(cpf_user)
     }
 
+    async getByNumber(number){
+        const stmt = db.prepare(`SELECT * FROM phone WHERE number = ?`)
+        return stmt.get(number)
+    }
 
-    insert(cpf_user, number, is_principal) {
+    insert(phone) {
         const stmt = db.prepare(`INSERT INTO phone (number, cpf_user, is_principal)
         VALUES (?, ?, ?)`)
 
-        return stmt.run(number, cpf_user, is_principal)
+        return stmt.run(phone.number, phone.cpf, phone.isPrincipal)
     }
 
     update(cpf_user, number, is_principal){

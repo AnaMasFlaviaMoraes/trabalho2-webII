@@ -49,7 +49,7 @@ module.exports = {
   showAddUserPage: (req, res) => {
     const currentUser = req.session.user;
     // Verificar permissões e renderizar página de adicionar usuário
-    res.render('criar-usuario', { user: currentUser });
+    res.render('criar-usuario', { data: { user: currentUser }});
   },
 
   // POST /addUser

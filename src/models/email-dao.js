@@ -6,17 +6,22 @@ class EmailDao {
         return stmt.all(cpf_user)
     }
 
-    getEmailPrincipal(cpf_user){
-        const stmt = db.prepare(`SELECT * FROM email WHERE cpf_user = ? and is_principal = true`)
+    async getEmailPrincipal(cpf_user){
+        const stmt = db.prepare(`SELECT * FROM email WHERE cpf_user = ? and is_principal = 'true'`)
         return stmt.get(cpf_user)
     }
 
-    insert(cpf_user, email, is_principal) {
+    getByEmail(email){
+        const stmt = db.prepare(`SELECT * FROM email WHERE email = ?`)
+        return stmt.get(email)
+    }
+
+    insert(email) {
         const stmt = db.prepare(`INSERT INTO 
         email (email, cpf_user, is_principal)
         VALUES (?, ?, ?)`)
 
-        return stmt.run(email, cpf_user, is_principal)
+        return stmt.run(email.email, email.cpf, email.isPrincipal)
     }
 
     update(email){

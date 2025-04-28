@@ -9,19 +9,19 @@ db.exec(`
         cpf TEXT PRIMARY KEY UNIQUE,
         name TEXT NOT NULL,
         password TEXT NOT NULL,
-        role CHECK(role IN ('ADMIN', 'CLIENT')) NOT NULL
+        role CHECK(role IN ('ADMIN', 'CLIENTE')) NOT NULL
     );
 
-    CREATE TABLE IF NOT EXISTS telephone (
+    CREATE TABLE IF NOT EXISTS phone (
         number TEXT PRIMARY KEY NOT NULL,
         is_principal BOOLEAN NOT NULL,
-        cpf_user TEXT NOT NULL REFERENCES users, 
+        cpf_user TEXT NOT NULL REFERENCES user
     );
 
     CREATE TABLE IF NOT EXISTS email (
         email TEXTO PRIMARY KEY NOT NULL,
         is_principal BOOLEAN NOT NULL,
-        cpf_user TEXT NOT NULL REFERENCES users
+        cpf_user TEXT NOT NULL REFERENCES user
     );
    
 `);

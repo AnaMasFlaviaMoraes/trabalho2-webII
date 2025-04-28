@@ -1,11 +1,12 @@
 const { db } = require("../configs/database.js")
+const { inspect } = require('util')
 
 class UserDao {
 
     constructor(){}
     
     getAll(){
-        const stmt = db.prepare('SELECT * FROM user')
+        const stmt = db.prepare('SELECT cpf, name, role FROM user')
         return stmt.all()
     }
 
@@ -14,17 +15,31 @@ class UserDao {
         return stmt.get(cpf)
     }
 
+    async getByName(name){
+        const stmt = db.prepare(`SELECT * FROM user WHERE name LIKE ?`)
+        return stmt.all(`%${name}%`)
+    }
+
+    async login(cpf, senha){
+        const stmt = db.prepare(`SELECT * FROM user WHERE cpf = ? and password = ?`)
+        return stmt.get(cpf, senha) 
+    }
+
     async getLast(){
         const stmt = db.prepare(`SELECT * FROM user LIMIT 1`)
         return stmt.get()
     }
 
-    insert(user){
+    async insert(user){
+        console.log('insert user ' + inspect(user))
         const stmt = db.prepare(`INSERT INTO 
         user (cpf, name, password, role) 
         VALUES (?, ?, ?, ?)`)
-        return stmt.run(user.cpf, 
-            user.name, user.password, user.role)
+        console.log('stmt ' + inspect(stmt))
+        let u = stmt.run(user.cpf, 
+            user.nome, user.senha, user.role)
+        console.log('u ' + inspect(u))
+        return u
     }
 
     update(cpf, name, password, role){
