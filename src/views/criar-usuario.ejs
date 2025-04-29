@@ -11,20 +11,29 @@
         <div class="navbar-left">
             <h1>Cadastrar Usuário</h1>
         </div>
+        <% if (data.user) { %>
         <div class="navbar-right">
             <a href="/logout" class="logout">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
         </div>
+        <% } else { %>
+        <div class="navbar-right">
+            <a href="/login" class="logout">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+        <% } %>
     </div>
+
+    <% if (data.errorMessage) { %>
+        <h4><%= data.errorMessage %></h4>
+    <% } %>
 
     <div class="form-container">
         <form action="/addUser" method="POST">
             <label>Nome:</label>
             <input type="text" name="nome" placeholder="Nome" required>
-
-            <label>Username:</label>
-            <input type="text" name="username" placeholder="Username" required>
 
             <label>CPF:</label>
             <input type="text" name="cpf" placeholder="000.000.000-00" required>
@@ -40,7 +49,7 @@
                 <div class="item">
                     <input type="text" name="telefones[0].numero" placeholder="(00) 90000-0000" required>
                     <label class="check">
-                        <input type="radio" name="telefonePrincipal" checked> Principal
+                        <input type="radio" name="telefonePrincipal" value="0" checked> Principal
                     </label>
                 </div>
                 <button type="button" onclick="addTelefone()">Adicionar Telefone</button>
@@ -51,7 +60,7 @@
                 <div class="item">
                     <input type="email" name="emails[0].endereco" placeholder="fulano@email.com" required>
                     <label class="check">
-                        <input type="radio" name="emailPrincipal" checked> Principal
+                        <input type="radio" name="emailPrincipal" value="0" checked> Principal
                     </label>
                 </div>
                 <button type="button" onclick="addEmail()">Adicionar Email</button>

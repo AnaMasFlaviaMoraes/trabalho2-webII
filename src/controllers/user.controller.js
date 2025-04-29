@@ -1,6 +1,6 @@
-// controllers/userController.js
+const { UserDao } = require("../models/user-dao")
+const { User } = require("../models/user-model")
 
-const userModel = require('../models/user.model');
 const session = require('express-session');
 
 const user = {
@@ -49,13 +49,32 @@ module.exports = {
   showAddUserPage: (req, res) => {
     const currentUser = req.session.user;
     // Verificar permissões e renderizar página de adicionar usuário
-    res.render('criar-usuario', { user: currentUser });
+    res.render('criar-usuario', { data: { user: currentUser }});
   },
 
   // POST /addUser
   addUser: async (req, res) => {
     const { nome, username, cpf, senha, telefones, emails } = req.body;
-    // Lógica para definir perfil e salvar novo usuário
+     // inicio
+     const user = User.instanceRow(req.body)
+     const userDao = new UserDao()
+     let firstUser = false
+ 
+     //Verifica se é o primeiro
+     let lastUser = await userDao.getLast()
+     if(!lastUser) firstUser = true
+ 
+     //Verifica se já existe
+     let userExists = await userDao.getByCpf(user.cpf)
+     if(userExists) return res.render('criar-usuario', { error: 'Usuário já existe!' })
+ 
+     //Cadastra usuario como admin caso não exista
+     if(firstUser) {
+         user.role = true
+         userDao.insert(user)
+     } else userDao.insert(user)
+ 
+     res.redirect("/users");
   },
 
   // GET /users?page=&filter=
