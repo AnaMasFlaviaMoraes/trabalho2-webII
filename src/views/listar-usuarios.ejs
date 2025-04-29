@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <link rel="stylesheet" href="css/lista.css">
+    <title>Lista</title>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <h1>Controle de usuários</h1>
+        </div>
+        <div class="navbar-right">
+            <a href="/logout" class="logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    <div class="content read">
+        <h2>Lista de usuários</h2>
+        <div class="container">
+            <a href="/addUser" class="create-contact">Novo Usuário</a>
+            <div class="wrap">
+                <form action="/users" method="GET" class="search">
+                  <input type="text" class="searchTerm" placeholder="Pesquisar por nome" name="searchNome">
+                  <button type="submit" class="searchButton">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </form>
+            </div> 
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <td>#</td>
+                    <td>Nome</td>
+                    <td>Username</td>
+                    <td>Perfil</td>
+                    <td>Telefone</td>
+                    <td>E-mail</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach((user, index) => { %>
+                    <% 
+                        const isAdmin   = loggedUser.perfil === 'admin';
+                        const isSelf    = loggedUser.id === user.id;
+                        const canEdit   = isAdmin || isSelf;
+                        const canDelete = isAdmin && (user.perfil !== 'admin' || isSelf);
+                    %>
+                <tr onclick="location.href='/user/<%= user.id %>'" style="cursor: pointer;">
+                    <td><%= index + 1 %></td>
+                    <td><%= user.nome %></td>
+                    <td><%= user.username %></td>
+                    <td><%= user.perfil %></td>
+                    <td><%= user.telefones.find(t => t.principal)?.numero || '-' %></td>
+                    <td><%= user.emails.find(e => e.principal)?.endereco || '-' %></td>
+                    <td class="actions">
+                        <a href="/user/<%= user.id %>/edit" class="edit <%= canEdit ? '' : 'disabled' %>">
+                            <i class="fas fa-pen fa-xs"></i>
+                        </a>
+                        <a href="javascript:void(0)" class="trash <%= canDelete ? '' : 'disabled' %>" onclick="openModal('<%= user.id %>', '<%= user.username %>')">
+                            <i class="fas fa-trash fa-xs"></i>
+                        </a>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <a href="#"><i class="fas fa-angle-double-left fa-sm"></i></a>
+            <a href="#"><i class="fas fa-angle-double-right fa-sm"></i></a>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <p>Tem certeza que deseja excluir este usuário?</p>
+            <p id="userToDelete"></p>
+
+            <div class="modal-buttons">
+                <form id="deleteForm" method="post">
+                    <button type="submit" class="confirm">Sim, excluir</button>
+                </form>
+                <button class="cancel" onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(userId, username) {
+            const modal = document.getElementById('deleteModal');
+            const form = document.getElementById('deleteForm');
+            const userToDelete = document.getElementById('userToDelete');
+    
+            form.action = `/deleteUser/${userId}`;
+            userToDelete.textContent = `Username: ${username}`;
+            modal.style.display = 'flex';
+        }
+    
+        function closeModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+    
+        window.onclick = function(event) {
+            const modal = document.getElementById('deleteModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+    
+</body>
+</html>
