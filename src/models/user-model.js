@@ -1,5 +1,6 @@
 class User {
-    constructor(nome, cpf, senha, role, telefones, emails) {
+    constructor(id, nome, cpf, senha, role, telefones, emails) {
+        this.id = id
         this.nome = nome
         this.cpf = cpf
         this.senha = senha
@@ -11,7 +12,17 @@ class User {
     }
 
     static instanceRow(user){
-        return new User(user.nome, user.cpf, user.senha, user.role)
+        return new User(
+            user.id,
+            user.nome,
+            user.cpf,
+            user.senha,
+            user.role,
+            user.telefones,
+            user.telefonePrincipal,
+            user.emails,
+            user.emailPrincipal
+        );
     }
 
     verifyIfMainPhoneExists() {

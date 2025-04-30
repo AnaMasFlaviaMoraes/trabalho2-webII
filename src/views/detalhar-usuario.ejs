@@ -20,19 +20,17 @@
 
     <div class="form-container">
         <label>Nome:</label>
-        <input type="text" name="nome" value="<%= user.nome %>" readonly>
-        <label>Username:</label>
-        <input type="text" name="username" value="<%= user.username %>" readonly>
+        <input type="text" name="nome" value="<%= user.name %>" readonly>
         <label>CPF:</label>
         <input type="text" value="<%= user.cpf %>" readonly>
         <label>Perfil:</label>
-        <input type="text" value="<%= user.perfil %>" readonly>
+        <input type="text" value="<%= user.role %>" readonly>
         <div class="multi-field" id="telefonesContainer">
             <h3>Telefones</h3>
-            <% user.telefones.forEach(function(tel, i) { %>
+            <% user.phones.forEach(function(phone, i) { %>
                 <div class="item">
-                    <input type="text" name="telefones[<%= i %>].numero" value="<%= tel.numero %>" readonly>
-                    <% if (tel.principal) { %>
+                    <input type="text" name="telefones[<%= i %>].numero" value="<%= phone.number %>" readonly>
+                    <% if (phone.principal) { %>
                         <label class="check">
                             <input type="radio" name="telefonePrincipal" value="<%= i %>" checked> Principal
                         </label>
@@ -44,10 +42,10 @@
             <h3>E-mails</h3>
             <% user.emails.forEach(function(email, i) { %>
                 <div class="item">
-                    <input type="email" name="emails[<%= i %>].endereco" value="<%= email.endereco %>" required>
-                    <% if (email.principal) { %>
+                    <input type="email" name="emails[<%= i %>].email" value="<%= email.email %>" required>
+                    <% if (email.is_principal == 1 || email.is_principal === 'true') { %>
                         <label class="check">
-                            <input type="radio" name="emailPrincipal" value="<%= i %>" <%= email.principal ? 'checked' : '' %>> Principal
+                            <input type="radio" name="emailPrincipal" value="<%= i %>" <%= email.is_principal ? 'checked' : '' %>> Principal
                         </label>
                     <% } %>
                 </div>

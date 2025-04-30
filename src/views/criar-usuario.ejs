@@ -38,10 +38,18 @@
             <label>CPF:</label>
             <input type="text" name="cpf" placeholder="000.000.000-00" required>
 
+            <label>Senha:</label>
+            <input type="password" name="senha" placeholder="Senha" required>
+
             <label>Perfil</label>
-            <select name="perfil" required>
-                <option value="admin">Admin</option>
-                <option value="client" selected="selected" >Cliente</option>
+            <select name="role" required>
+            <% if (data.firstUser) { %>
+                <option value="ADMIN" selected>Admin</option>
+                <option value="CLIENTE" disabled>Cliente</option>
+              <% } else { %>
+                <option value="ADMIN">Admin</option>
+                <option value="CLIENTE" selected>Cliente</option>
+              <% } %>
             </select>
 
             <div class="multi-field" id="telefonesContainer">
@@ -72,6 +80,17 @@
             <a href="/users" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
         </div>
     </div> 
+
+    <% if (failed) { %>
+        <div id="failedLoginModal" class="modal" style="display: flex;">
+            <div class="modal-content">
+                <p><%= data.error %></p>
+                <div class="modal-buttons">
+                    <button class="cancel" onclick="closeModal()">Fechar</button>
+                </div>
+            </div>
+        </div>
+    <% } %>
 
     <script>
         function addTelefone() {
@@ -147,6 +166,11 @@
             input.addEventListener('input', () => maskTelefone(input));
         });
     });
+
+    function closeModal() {
+        const modal = document.getElementById('failedLoginModal');
+        modal.style.display = 'none';
+      }
 
     </script> 
 </body>

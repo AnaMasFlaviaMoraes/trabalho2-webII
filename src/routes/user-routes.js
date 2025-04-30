@@ -1,12 +1,24 @@
 const { Router } = require('express');
-const { showAddUserPage,
+// const { 
+//         getUserDetails,
+//         showUpdateUserPage,
+//         updateUser,
+//         deleteUser
+//     } = require('../controllers/user.controller.js');
+
+const { addUser,
+        login,
         getUserDetails,
+        showLoginPage,
+        logout,
+        listUsers,
+        showAddUserPage,
         showUpdateUserPage,
         updateUser,
-        deleteUser
-    } = require('../controllers/user.controller.js');
-
-const { addUser, login, showLoginPage, logout, listUsers } = require('../controllers/user-controller.js')
+        deleteUser,
+        deletePhone,
+        deleteEmail 
+    } = require('../controllers/user-controller.js')
 const authUser = require('../middlewares/authUser.js');
 
 const userRouter = Router();
@@ -22,6 +34,14 @@ userRouter.get('/user/:id', authUser, getUserDetails);
 userRouter.get('/user/:id/edit', authUser, showUpdateUserPage); 
 userRouter.post('/updateUser/:id', authUser, updateUser);
 userRouter.post('/deleteUser/:id', authUser, deleteUser);
+userRouter.post('/deletePhone/:idPhone', authUser, deletePhone);
+userRouter.post('/deleteEmail/:idEmail', authUser, deleteEmail);
+
+
+// @TODO arrumar modal de exclusão de telefone e e-mail página de edição
+// @TODO arrumar paginação da listagem
+// Botão da página de edição e detalhes está desabiliado 
+// TESTAR E LIMPAR CÓDIGO
 
 
 module.exports = userRouter;

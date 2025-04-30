@@ -21,26 +21,23 @@
     <div class="form-container">
         <form action="/updateUser/<%= user.id %>" method="POST">
             <label>Nome:</label>
-            <input type="text" name="nome" value="<%= user.nome %>" required>
-
-            <label>Username:</label>
-            <input type="text" name="username" value="<%= user.username %>" required>
+            <input type="text" name="nome" value="<%= user.name %>" required>
 
             <label>CPF:</label>
             <input type="text" value="<%= user.cpf %>" readonly>
 
             <label>Perfil:</label>
-            <input type="text" value="<%= user.perfil %>" readonly>
+            <input type="text" value="<%= user.role %>" readonly>
 
             <div class="multi-field" id="telefonesContainer">
                 <h3>Telefones</h3>
-                <% user.telefones.forEach(function(tel, i) { %>
+                <% user.phones.forEach(function(phone, i) { %>
                     <div class="item">
-                        <input type="text" name="telefones[<%= i %>].numero" value="<%= tel.numero %>" required>
+                        <input type="text" name="telefones[<%= i %>].numero" value="<%= phone.number %>" required>
                         <label class="check">
-                            <input type="radio" name="telefonePrincipal" value="<%= i %>" <%= tel.principal ? 'checked' : '' %>> Principal
+                            <input type="radio" name="telefonePrincipal" value="<%= i %>" <%= phone.is_principal ? 'checked' : '' %>> Principal
                         </label>
-                        <button type="button" onclick="openPhoneModal('<%= tel.id %>','<%= tel.numero %>')">Remover</button>
+                        <button type="button" onclick="openPhoneModal('<%= phone.id %>','<%= phone.number %>')">Remover</button>
                     </div>
                 <% }) %>
                 <button type="button" onclick="addTelefone()">Adicionar Telefone</button>
@@ -50,11 +47,11 @@
                 <h3>E-mails</h3>
                 <% user.emails.forEach(function(email, i) { %>
                     <div class="item">
-                        <input type="email" name="emails[<%= i %>].endereco" value="<%= email.endereco %>" required>
+                        <input type="email" name="emails[<%= i %>].email" value="<%= email.email %>" required>
                         <label class="check">
-                            <input type="radio" name="emailPrincipal" value="<%= i %>" <%= email.principal ? 'checked' : '' %>> Principal
+                            <input type="radio" name="emailPrincipal" value="<%= i %>" <%= email.is_principal ? 'checked' : '' %>> Principal
                         </label>
-                        <button type="button" onclick="openEmailModal('<%= email.id %>','<%= email.endereco %>')">Remover</button>
+                        <button type="button" onclick="openEmailModal('<%= email.id %>','<%= email.email %>')">Remover</button>
                     </div>
                 <% }) %>
                 <button type="button" onclick="addEmail()">Adicionar Email</button>
@@ -82,14 +79,25 @@
             <p id="modalMessage"></p>
             <p id="itemToDelete"></p>
             <div class="modal-buttons">
-            <form id="deleteForm" method="POST" style="display: none;">
+            <form id="deleteForm" method="POST">
                 <button type="submit" class="confirm">Sim, excluir</button>
             </form>
-            <button id="confirmRemoveBtn" class="confirm">Sim, remover</button>
+
             <button class="cancel" onclick="closeModal()">Cancelar</button>
         </div>
     </div>
   </div>
+
+  <% if (successAction) { %>
+    <div id="infoModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+            <p><%= message %></p>
+            <div class="modal-buttons">
+                <button class="cancel" onclick="closeInfoModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+<% } %>
 
   <script>
 
@@ -103,7 +111,7 @@
         itemToDelete.textContent = `Telefone: ${numero}`;
         modal.style.display = 'flex';
         msg.textContent = "Tem certeza que deseja excluir este telefone?";
-        form.style.display = 'none';
+        form.style.display = 'block';
         confirmRemoveBtn.style.display = 'inline-block';
         modal.style.display = 'flex';
     }
@@ -169,7 +177,7 @@
         itemToDelete.textContent = `E-mail: ${endereco}`;
         modal.style.display = 'flex';
         msg.textContent = "Tem certeza que deseja excluir este e-mail?";
-        form.style.display = 'none';
+        // form.style.display = 'none';
         confirmRemoveBtn.style.display = 'inline-block';
         modal.style.display = 'flex';
     }
@@ -204,6 +212,11 @@
         form.style.display = 'none';
         confirmRemoveBtn.style.display = 'inline-block';
         modal.style.display = 'flex';
+    }
+
+    function closeInfoModal() {
+        const modal = document.getElementById('infoModal');
+        modal.style.display = 'none';
     }
 
     </script>

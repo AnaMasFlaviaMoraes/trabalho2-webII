@@ -55,6 +55,7 @@
                 <tr onclick="location.href='/user/<%= user.id %>'" style="cursor: pointer;">
                     <td><%= index + 1 %></td>
                     <td><%= user.name %></td>
+                    <td><%= user.cpf %></td>
                     <td><%= user.role %></td>
                     <td><%= user.mainPhone %></td>
                     <td><%= user.mainEmail %></td>
@@ -62,7 +63,7 @@
                         <a href="/user/<%= user.id %>/edit" class="edit <%= canEdit ? '' : 'disabled' %>">
                             <i class="fas fa-pen fa-xs"></i>
                         </a>
-                        <a href="javascript:void(0)" class="trash <%= canDelete ? '' : 'disabled' %>" onclick="event.stopPropagation(); openModal('<%= user.id %>', '<%= user.username %>')">
+                        <a href="javascript:void(0)" class="trash <%= canDelete ? '' : 'disabled' %>" onclick="event.stopPropagation(); openModal('<%= user.id %>', '<%= user.name %>')">
                             <i class="fas fa-trash fa-xs"></i>
                         </a>
                     </td>
@@ -92,13 +93,24 @@
         </div>
     </div>
 
+    <% if (successAction) { %>
+        <div id="infoModal" class="modal" style="display: flex;">
+            <div class="modal-content">
+                <p><%= message %></p>
+                <div class="modal-buttons">
+                    <button class="cancel" onclick="closeInfoModal()">Fechar</button>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
     <script>
-        function openModal(cpf, nome) {
+        function openModal(id, nome) {
             const modal = document.getElementById('deleteModal');
             const form = document.getElementById('deleteForm');
             const userToDelete = document.getElementById('userToDelete');
-    
-            form.action = `/deleteUser/${cpf}`;
+            console.log(id, nome);
+            form.action = `/deleteUser/${id}`;
             userToDelete.textContent = `Nome: ${nome}`;
             modal.style.display = 'flex';
         }
@@ -113,6 +125,11 @@
                 closeModal();
             }
         }
+
+        function closeInfoModal() {
+        const modal = document.getElementById('infoModal');
+        modal.style.display = 'none';
+      }
     </script>
     
 </body>
