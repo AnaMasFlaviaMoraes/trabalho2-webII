@@ -19,19 +19,22 @@
     </div>
 
     <div class="form-container">
-        <form action="/updateUser/<%= user.id %>" method="POST">
+        <form action="/updateUser/<%= data.user.id %>" method="POST">
             <label>Nome:</label>
-            <input type="text" name="nome" value="<%= user.name %>" required>
+            <input type="text" name="nome" value="<%= data.user.name %>" required>
 
             <label>CPF:</label>
-            <input type="text" value="<%= user.cpf %>" readonly>
+            <input type="text" value="<%= data.user.cpf %>" readonly>
 
             <label>Perfil:</label>
-            <input type="text" value="<%= user.role %>" readonly>
+            <input type="text" value="<%= data.user.role %>" readonly>
+
+            <label>Senha:</label>
+            <input type="password" name="senha" value="<%= data.user.password %>" placeholder="Digite a nova senha" required>
 
             <div class="multi-field" id="telefonesContainer">
                 <h3>Telefones</h3>
-                <% user.phones.forEach(function(phone, i) { %>
+                <% data.user.phones.forEach(function(phone, i) { %>
                     <div class="item">
                         <input type="text" name="telefones[<%= i %>].numero" value="<%= phone.number %>" required>
                         <label class="check">
@@ -45,7 +48,7 @@
 
             <div class="multi-field" id="emailsContainer">
                 <h3>E-mails</h3>
-                <% user.emails.forEach(function(email, i) { %>
+                <% data.user.emails.forEach(function(email, i) { %>
                     <div class="item">
                         <input type="email" name="emails[<%= i %>].email" value="<%= email.email %>" required>
                         <label class="check">
@@ -61,13 +64,13 @@
         </form>
         <div class="action-buttons">
             <% 
-                const isAdmin   = loggedUser.perfil === 'admin';
-                const isSelf    = loggedUser.id === userId;
+                const isAdmin   = data.loggedUser.perfil === 'admin';
+                const isSelf    = data.loggedUser.id === data.userId;
                 const canEdit   = isAdmin || isSelf;
-                const canDelete = isAdmin && (user.perfil !== 'admin' || isSelf);
+                const canDelete = isAdmin && (data.user.perfil !== 'admin' || isSelf);
             %>
             <a href="/users" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
-            <button class="btn excluir <%= canDelete ? '' : 'disabled' %>" onclick="openUserModal('<%= user.id %>', '<%= user.nome %>')">
+            <button class="btn excluir <%= canDelete ? '' : 'disabled' %>" onclick="openUserModal('<%= data.user.id %>', '<%= data.user.nome %>')">
                 <i class="fas fa-trash"></i> Excluir
             </button>
         </div>
@@ -88,10 +91,10 @@
     </div>
   </div>
 
-  <% if (successAction) { %>
+  <% if (data.successAction) { %>
     <div id="infoModal" class="modal" style="display: flex;">
         <div class="modal-content">
-            <p><%= message %></p>
+            <p><%= data.message %></p>
             <div class="modal-buttons">
                 <button class="cancel" onclick="closeInfoModal()">Fechar</button>
             </div>

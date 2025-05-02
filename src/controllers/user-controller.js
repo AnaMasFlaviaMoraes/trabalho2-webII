@@ -8,6 +8,7 @@ const { Email } = require("../models/email-model");
 const { PhoneDao } = require("../dao/phone-dao");
 const { EmailDao } = require("../dao/email-dao");
 const { paginate } = require("../utils/paginate");
+const { use } = require("../routes/user-routes");
 
 const userDao = new UserDao();
 const phoneDao = new PhoneDao();
@@ -24,9 +25,6 @@ async function listUsers(req, res) {
     });
   }
 
-function update(req, res) {
-
-}
 // GET /login
 async function showLoginPage (req, res) {
     res.render('login', {failed: false, error: null})
@@ -102,67 +100,37 @@ async function getUserDetails(req, res) {
 
 // POST /addUser
 async function addUser(req, res) {
-    // inicio
     const user = User.instanceRow(req.body);
-    console.log("REQ.BODY", req.body);
-console.log('USER', user)
-    let firstUser = false;
 
-    //Verifica se email e telefone existe
     let phones = Phone.instanceList(req.body.telefones, req.body.telefonePrincipal, user.id)
     let emails = Email.instanceList(req.body.emails, req.body.emailPrincipal, user.id)
     user.phones = phones
     user.emails = emails
 
     let verifyPhone = user.verifyIfMainPhoneExists();
-    /*
-    { failed: true,
-             data: { 
-                error: 'Nenhum usuário cadastrado! Cadastre-se',
-                firstUser: true
-             }
-            }
-    
-    */
     if (!verifyPhone.exists) return res.render("criar-usuario", { failed: true, data: { error: verifyPhone.message } })
 
     let verifyMail = user.verifyIfMainEmailExists()
     if (!verifyMail.exists) return res.render("criar-usuario", { failed: true, data: { error: verifyMail.message } })
-    
-    //Verifica se é o primeiro
-    // let lastUser = await userDao.getLast()
-    // if(!lastUser) firstUser = true
 
-    //Verifica se já existe user
     let userExists = await userDao.getByCpf(user.cpf)
     if(userExists) return res.render('criar-usuario', { failed: true, data: { error: 'Usuário com esse CPF já existe!' } })
     
-    //Verifica se já existe telefone
     for(let phone of phones){
         let phoneExists = await phoneDao.getByNumber(phone.number)
         if(phoneExists) return res.render('criar-usuario', { failed: true, data: { error: 'Telefone já existe!' } })
     }
 
-    //Verifica se já existe telefone
     for(let email of emails){
         let emailExists = await emailDao.getByEmail(email.email)
         if(emailExists) return res.render('criar-usuario', { failed: true, data: { error: 'Email já existe!' } })
     }
     
-    //Cadastra usuario como admin caso não exista
-    // if(firstUser) {
-        //user.role = 'ADMIN'
-        const newUserId = await userDao.insert(user);
-        console.log("ID CRIADO", newUserId);
-        Phone.insertList(user.phones, newUserId);
-        Email.insertList(user.emails, newUserId);
-    // } else {
-    //     user.role = 'CLIENTE'
-    //     const newUserId = await userDao.insert(user);
-    //     console.log("ID CRIADO", newUserId);
-    //     Phone.insertList(user.phones, newUserId);
-    //     Email.insertList(user.emails, newUserId);
-    // }
+    const newUserId = await userDao.insert(user);
+    console.log("ID CRIADO", newUserId);
+    Phone.insertList(user.phones, newUserId);
+    Email.insertList(user.emails, newUserId);
+   
     res.redirect("/users");
 }
 
@@ -181,16 +149,113 @@ async function showUpdateUserPage (req, res) {
     const emails = await emailDao.getByUser(userId);
     user.phones = phones;
     user.emails = emails;
-    console.log("user encontrado", user);
 
-    res.render('editar-usuario', { user, loggedUser, userId, successAction, message: successMessage });
+    res.render('editar-usuario', {data: { user, loggedUser, userId, successAction, message: successMessage }});
 }
 
 async function updateUser(req, res){
-    const userId = req.params.id;
-    const currentUser = req.session.user;
-    // Verificar permissões e atualizar usuário
-    //CRIAR MÉTODO
+  const userId = req.params.id;
+  const loggedUser   = req.session.user;
+
+  const oldUser = await userDao.getById(userId);
+  if (!oldUser) {
+    return res.status(404).send('Usuário não encontrado');
+  }
+
+  const oldPhones = await phoneDao.getByUser(userId);
+  const oldEmails = await emailDao.getByUser(userId);
+  oldUser.phones = oldPhones;
+  oldUser.emails = oldEmails;
+
+  if (loggedUser.role !== 'ADMIN' && loggedUser.id !== userId) {
+    return res.status(403).send('Acesso negado. Você não pode editar este usuário.');
+  }
+
+  const updated = User.instanceRow(req.body);
+  updated.id   = userId;        
+  updated.cpf  = oldUser.cpf;     
+  updated.role = oldUser.role;    
+
+  const phones = Phone.instanceList(
+    req.body.telefones,
+    req.body.telefonePrincipal,
+    userId
+  );
+  const emails = Email.instanceList(
+    req.body.emails,
+    req.body.emailPrincipal,
+    userId
+  );
+  updated.phones = phones;
+  updated.emails = emails;
+
+  const vp = updated.verifyIfMainPhoneExists();
+  if (!vp.exists) {
+    return res.render('editar-usuario', {
+      data: { 
+        user: oldUser, 
+        successAction: true,
+        userId,
+        loggedUser,
+        message: vp.message, 
+      }
+    });
+  }
+  const ve = updated.verifyIfMainEmailExists();
+  if (!ve.exists) {
+    return res.render('editar-usuario', {
+      data: { 
+        user: oldUser,
+        successAction: true,
+        userId,
+        loggedUser,
+        message: ve.message,
+       }
+    });
+  }
+
+  for (let p of phones) {
+    const found = await phoneDao.getByNumber(p.number);
+    
+    if (found && Number(found.id_user) !== Number(userId)) {
+      return res.render('editar-usuario', {
+        data: { 
+          user: oldUser,
+          successAction: true,
+          userId,
+          loggedUser,
+          message: "Telefone já existe!",
+         }
+      });
+    }
+  }
+  for (let e of emails) {
+    const found = await emailDao.getByEmail(e.email);
+    if (found && Number(found.id_user) !== Number(userId)) {
+      return res.render('editar-usuario', {
+        data: { 
+          user: oldUser,
+          successAction: true,
+          userId,
+          loggedUser,
+          message: "Email já existe!",
+         }
+      });
+    }
+  }
+
+  console.log("Usuário atualizado", updated);
+  await userDao.update(updated);
+
+  await phoneDao.deleteByUser(userId);
+  await Phone.insertList(phones, userId);
+
+  await emailDao.deleteByUser(userId);
+  await Email.insertList(emails, userId);
+
+  const msg = encodeURIComponent('Usuário atualizado com sucesso!');
+  return res.redirect(`/users?successMessage=${msg}`);
+
   }
 
   async function deleteUser(req, res) {
@@ -300,7 +365,6 @@ async function updateUser(req, res){
 
 module.exports = {
     listUsers,
-    update,
     login,
     getUserDetails,
     addUser,

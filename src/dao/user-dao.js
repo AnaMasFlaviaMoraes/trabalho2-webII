@@ -53,10 +53,24 @@ class UserDao {
         return newUser.lastInsertRowid;
     }
 
-    update(cpf, name, password, role){
-        const stmt = db.prepare(`UPDATE user SET name = ?, password = ?, role = ? WHERE cpf = ?`);
-        return stmt.run(name, password, role, cpf);
-    }
+    update(user) {
+        const stmt = db.prepare(`
+          UPDATE user
+          SET name     = ?,
+              password = ?,
+              role     = ?
+          WHERE id = ?
+        `);
+    
+        const info = stmt.run(
+          user.nome,    
+          user.senha, 
+          user.role,     
+          user.id       
+        );
+    
+        return info.changes; 
+      }
 
     delete(id){
         const stmt = db.prepare(`DELETE FROM user WHERE id = ?`);
