@@ -123,7 +123,7 @@ button[type="submit"] {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    width: 300px;
+    /* width: 300px; */
     position:relative;
     left: 30%;
 }
@@ -157,9 +157,9 @@ button[type="submit"]:hover {
   }
   
   .modal-buttons {
-    margin-top: 20px;
+    margin-top: -20px;
     display: flex;
-    justify-content: end;
+    justify-content: space-around;
   }
   
   .modal-buttons .confirm {
@@ -173,12 +173,12 @@ button[type="submit"]:hover {
   
   .modal-buttons .cancel {
     background-color: #ccc;
-    border: none;
     padding: 10px 20px;
-    border-radius: 6px;
+    margin-top: 50px;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
   }
-
   .action-buttons {
     display: flex;
     gap: 10px;
@@ -194,6 +194,7 @@ button[type="submit"]:hover {
   .excluir {
     background-color: #dc3545;
     font-size: 12pt;
+    /**/
 }
 
 .excluir.disabled {
@@ -209,4 +210,8 @@ button[type="submit"]:hover {
     border-radius: 5px;
     cursor: pointer;
     color: white;
+}
+
+.salvar{
+    width: 300px;
 }

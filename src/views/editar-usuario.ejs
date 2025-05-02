@@ -60,17 +60,18 @@
                 <button type="button" onclick="addEmail()">Adicionar Email</button>
             </div>
 
-            <button type="submit">Salvar Alterações</button>
+            <button type="submit" class="salvar">Salvar Alterações</button>
         </form>
         <div class="action-buttons">
             <% 
-                const isAdmin   = data.loggedUser.perfil === 'admin';
-                const isSelf    = data.loggedUser.id === data.userId;
+                const isAdmin   = data.loggedUser.role == 'ADMIN';
+                const isSelf    = data.loggedUser.id == data.userId;
                 const canEdit   = isAdmin || isSelf;
-                const canDelete = isAdmin && (data.user.perfil !== 'admin' || isSelf);
+                const canDelete = isAdmin && (data.user.role != 'ADMIN' || isSelf);
+
             %>
             <a href="/users" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
-            <button class="btn excluir <%= canDelete ? '' : 'disabled' %>" onclick="openUserModal('<%= data.user.id %>', '<%= data.user.nome %>')">
+            <button class="btn excluir <%= canDelete ? '' : 'disabled' %>" onclick="openUserModal('<%= data.user.id %>', '<%= data.user.name %>')">
                 <i class="fas fa-trash"></i> Excluir
             </button>
         </div>
@@ -114,7 +115,7 @@
         itemToDelete.textContent = `Telefone: ${numero}`;
         modal.style.display = 'flex';
         msg.textContent = "Tem certeza que deseja excluir este telefone?";
-        form.style.display = 'block';
+        // form.style.display = 'block';
         confirmRemoveBtn.style.display = 'inline-block';
         modal.style.display = 'flex';
     }
@@ -212,7 +213,7 @@
         itemToDelete.textContent = `Nome: ${nome}`;
         modal.style.display = 'flex';
         msg.textContent = "Tem certeza que deseja excluir este usuário?";
-        form.style.display = 'none';
+        // form.style.display = 'none';
         confirmRemoveBtn.style.display = 'inline-block';
         modal.style.display = 'flex';
     }

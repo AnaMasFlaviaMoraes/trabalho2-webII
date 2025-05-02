@@ -156,6 +156,7 @@ async function showUpdateUserPage (req, res) {
 async function updateUser(req, res){
   const userId = req.params.id;
   const loggedUser   = req.session.user;
+  console.log("Usuário logado: ", loggedUser);
 
   const oldUser = await userDao.getById(userId);
   if (!oldUser) {

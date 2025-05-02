@@ -47,10 +47,10 @@
             <tbody>
                 <% data.paged.users.forEach((user, index) => { %>
                     <% 
-                        const isAdmin   = data.loggedUser.role === 'ADMIN';
-                        const isSelf    = data.loggedUser.id === user.id;
+                        const isAdmin   = data.loggedUser.role == 'ADMIN';
+                        const isSelf    = data.loggedUser.id == user.id;
                         const canEdit   = isAdmin || isSelf;
-                        const canDelete = isAdmin && (user.role !== 'ADMIN' || isSelf);
+                        const canDelete = isAdmin && (user.role != 'ADMIN' || isSelf);
                     %>
                 <tr onclick="location.href='/user/<%= user.id %>'" style="cursor: pointer;">
                     <td><%= index + 1 %></td>

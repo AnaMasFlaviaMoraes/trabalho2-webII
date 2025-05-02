@@ -53,14 +53,14 @@
         </div>
         <div class="action-buttons">
             <% 
-                const isAdmin   = loggedUser.perfil === 'admin';
-                const isSelf    = loggedUser.id === userId;
+                const isAdmin   = loggedUser.role == 'ADMIN';
+                const isSelf    = loggedUser.id == userId;
                 const canEdit   = isAdmin || isSelf;
-                const canDelete = isAdmin && (user.perfil !== 'admin' || isSelf);
+                const canDelete = isAdmin && (user.role != 'ADMIN' || isSelf);
             %>
-            <a href="/users" class="btn voltar <%= user.perfil %>"><i class="fas fa-arrow-left"></i> Voltar</a>
+            <a href="/users" class="btn voltar <%= user.role %>"><i class="fas fa-arrow-left"></i> Voltar</a>
             <a href="/user/<%= user.id %>/edit" class="btn editar <%= canEdit ? '' : 'disabled' %>"><i class="fas fa-edit"></i> Editar</a>
-            <button class="btn excluir <%= canDelete ? '' : 'disabled' %>" onclick="openUserModal('<%= user.id %>', '<%= user.nome %>')">
+            <button class="btn excluir <%= canDelete ? '' : 'disabled' %>" onclick="openUserModal('<%= user.id %>', '<%= user.name %>')">
                 <i class="fas fa-trash"></i> Excluir
             </button>
         </div>

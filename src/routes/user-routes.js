@@ -1,10 +1,4 @@
 const { Router } = require('express');
-// const { 
-//         getUserDetails,
-//         showUpdateUserPage,
-//         updateUser,
-//         deleteUser
-//     } = require('../controllers/user.controller.js');
 
 const { addUser,
         login,
@@ -40,8 +34,8 @@ userRouter.post('/deleteEmail/:idEmail', authUser, deleteEmail);
 
 // @TODO arrumar modal de exclusão de telefone e e-mail página de edição
 // @TODO arrumar paginação da listagem
-// Botão da página de edição e detalhes está desabiliado 
 // TESTAR E LIMPAR CÓDIGO
+// Ele está colocando os form da página de edição, criação, detalhes e exclusão com display none (CORRIGIR)
 
 
 module.exports = userRouter;
