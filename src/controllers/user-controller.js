@@ -2,7 +2,6 @@ const { inspect } = require("util")
 const { UserDao } = require("../dao/user-dao")
 const { User } = require("../models/user-model")
 
-const session = require('express-session');
 const { Phone } = require("../models/phone-model");
 const { Email } = require("../models/email-model");
 const { PhoneDao } = require("../dao/phone-dao");
@@ -14,6 +13,7 @@ const userDao = new UserDao();
 const phoneDao = new PhoneDao();
 const emailDao = new EmailDao();
 
+// GET /users
 async function listUsers(req, res) {
     const context = await buildUserListContext(req);
     const successMessage = req.query.successMessage || null;
@@ -32,12 +32,11 @@ async function showLoginPage (req, res) {
 // POST /login
 async function login(req, res) {
     const { cpf, senha } = req.body;
-    console.log({cpf, senha});
 
     let logado = await userDao.login(cpf, senha);
     const findOne = await userDao.existAnyUser();
     if(!findOne) {
-        console.log('nenhum usuario cadastrado');
+        console.log('Nenhum usuario cadastrado');
         return res.render('criar-usuario', { failed: true,
              data: { 
                 error: 'Nenhum usuário cadastrado! Cadastre-se',
@@ -45,7 +44,6 @@ async function login(req, res) {
              }
             });
     }
-    console.log('logado ' + inspect(logado));
     if (!logado) {
         return res.render('login', { failed: true, error: 'Usuário ou senha inválidos' });
     }
@@ -69,6 +67,7 @@ async function logout(req, res){
     });
 }
 
+// GET /user/:id
 async function getUserDetails(req, res) {
     const userId = req.params.id;
     const user = await userDao.getById(userId);
@@ -80,16 +79,12 @@ async function getUserDetails(req, res) {
     const emails = await emailDao.getByUser(userId);
     user.phones = phones;
     user.emails = emails;
-    console.log("user encontrado", user);
     const loggedUser = req.session.user;
-    console.log("Usuário logado: ", loggedUser);
-    console.log("id:", userId);
-    //user depois de pegar o userId e pegar um usuário no banco!!
     res.render('detalhar-usuario', { user, loggedUser, userId });
 }
 
+// GET /addUser
  async function showAddUserPage(req, res){
-    console.log("Chamei página de criação")
     res.render('criar-usuario', { failed: false,
         data: { 
            error: null,
@@ -127,13 +122,13 @@ async function addUser(req, res) {
     }
     
     const newUserId = await userDao.insert(user);
-    console.log("ID CRIADO", newUserId);
     Phone.insertList(user.phones, newUserId);
     Email.insertList(user.emails, newUserId);
    
     res.redirect("/users");
 }
 
+// GET /user/:id/edit
 async function showUpdateUserPage (req, res) {
     const userId = req.params.id;
     const loggedUser = req.session.user;
@@ -153,10 +148,10 @@ async function showUpdateUserPage (req, res) {
     res.render('editar-usuario', {data: { user, loggedUser, userId, successAction, message: successMessage }});
 }
 
+// POST /user/:id/edit
 async function updateUser(req, res){
   const userId = req.params.id;
   const loggedUser   = req.session.user;
-  console.log("Usuário logado: ", loggedUser);
 
   const oldUser = await userDao.getById(userId);
   if (!oldUser) {
@@ -245,7 +240,6 @@ async function updateUser(req, res){
     }
   }
 
-  console.log("Usuário atualizado", updated);
   await userDao.update(updated);
 
   await phoneDao.deleteByUser(userId);
@@ -259,11 +253,11 @@ async function updateUser(req, res){
 
   }
 
+// POST /user/:id/delete
   async function deleteUser(req, res) {
     const { id }      = req.params;
     const loggedUser  = req.session.user;
   
-    // validações...
     const user = await userDao.getById(id);
     if (!user) {
       return res.status(404).send('Usuário não encontrado');
@@ -271,14 +265,11 @@ async function updateUser(req, res){
     if (loggedUser.role !== 'ADMIN') {
       return res.status(403).send('Acesso negado.');
     }
-  
-    // exclui
+
     await userDao.delete(id);
     console.log('Usuário excluído:', id);
   
     const msg = encodeURIComponent('Usuário excluído com sucesso!');
-    console.log("loggedId", loggedUser.id)
-    console.log("id", id) ;
 
     if(Number(loggedUser.id) === Number(id)) {
         console.log("Entrou no if");
@@ -291,20 +282,17 @@ async function updateUser(req, res){
 
   async function buildUserListContext(req) {
     const page          = parseInt(req.query.page, 10) || 1;
-    const searchNome    = req.query.searchNome;
+    const searchNome    = req.query.searchNome || null;
     const errorMessage  = req.query.errorMessage || null;
     const loggedUser    = req.session.user;
   
-    // 1. busca raw
     let usersRaw = searchNome
       ? await userDao.getByName(searchNome)
       : await userDao.getAll();
   
-    // 2. garante array
     const usersArr = Array.isArray(usersRaw) ? usersRaw : [usersRaw];
     const users    = [];
   
-    // 3. enriquece com phone/email principal
     for (let u of usersArr) {
       const mainPhone = await phoneDao.getPhonePrincipal(u.id);
       const mainEmail = await emailDao.getEmailPrincipal(u.id);
@@ -314,18 +302,16 @@ async function updateUser(req, res){
       users.push(u);
     }
   
-    // 4. paginar
     const paged = paginate(users, page);
   
-    return { paged, loggedUser, errorMessage };
+    return { paged, loggedUser, errorMessage, searchNome };
   }
 
+  // POST /user/:idPhone/delete
   async function deletePhone(req, res) {
     const { idPhone } = req.params;
     const loggedUser  = req.session.user;
-    console.log("ID DO TELEFONE", idPhone);
   
-    // validações...
     const phone = await phoneDao.getById(idPhone);
     if (!phone) {
       return res.status(404).send('Telefone não encontrado');
@@ -333,8 +319,7 @@ async function updateUser(req, res){
     if (loggedUser.role !== 'ADMIN') {
       return res.status(403).send('Acesso negado.');
     }
-  
-    // exclui
+
     await phoneDao.delete(idPhone);
     console.log('Telefone excluído:', idPhone);
   
@@ -342,12 +327,11 @@ async function updateUser(req, res){
     res.redirect(`/user/${phone.id_user}/edit?successMessage=` + msg);
   }
 
+  // POST /user/:idEmail/delete
   async function deleteEmail(req, res) {
     const { idEmail } = req.params;
     const loggedUser  = req.session.user;
-    console.log("ID DO EMAIL", idEmail);
-  
-    // validações...
+
     const email = await emailDao.getById(idEmail);
     if (!email) {
       return res.status(404).send('Email não encontrado');
@@ -355,8 +339,7 @@ async function updateUser(req, res){
     if (loggedUser.role !== 'ADMIN') {
       return res.status(403).send('Acesso negado.');
     }
-  
-    // exclui
+
     await emailDao.delete(idEmail);
     console.log('Email excluído:', idEmail);
   

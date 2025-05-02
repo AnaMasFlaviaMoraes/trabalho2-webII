@@ -1,30 +1,29 @@
-const ITEMPERPAGE = 5
+const ITEM_PER_PAGE = 5;
 
-function paginate(users, pageNumber) {
-    let paginate = {}
-    let statingItem = (pageNumber - 1) * ITEMPERPAGE
-    let lastItem = (pageNumber * ITEMPERPAGE)
+/**
+ * Pagina um array de usuários.
+ * @param {Array} items - lista completa de usuários
+ * @param {number} page - número da página (1-index)
+ * @returns {Object} contexto de paginação
+ */
+function paginate(items, page = 1) {
+  const totalItems = items.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / ITEM_PER_PAGE));
+  const startIndex = (page - 1) * ITEM_PER_PAGE;
+  const endIndex   = startIndex + ITEM_PER_PAGE;
+  const pagedUsers = items.slice(startIndex, endIndex);
 
-    let paginatesUsers = users.slice(statingItem, lastItem)
-
-    paginate.users = paginatesUsers
-    paginate.totalPages = Math.ceil(users.length)
-    if(paginate.totalPages == 0) paginate.totalPages = 1
-    paginate.pageNumber = pageNumber
-    paginate.totalItems = users.length
-    paginate.itemPerPage = ITEMPERPAGE
-    paginate.firtItemPage = ITEMPERPAGE * (pageNumber - 1) + 1
-
-    if((ITEMPERPAGE * pageNumber) > paginatesUsers.length) paginate.lastItemPage = paginatesUsers.length
-    else paginate.lastItemPage = ITEMPERPAGE * pageNumber
-
-    if(pageNumber - 1 == 0) paginate.previous = null
-    else paginate.previousPage = paginate.pageNumber - 1
-
-    if(pageNumber + 1 > paginate.totalPages) paginate.nextPage = null
-    else paginate.nextPage = paginate.pageNumber + 1
-
-    return paginate
+  return {
+    users: pagedUsers,           
+    page,                       
+    itemPerPage: ITEM_PER_PAGE,  
+    totalItems,                 
+    totalPages,                  
+    firstItemPage: totalItems ? startIndex + 1 : 0,
+    lastItemPage: Math.min(totalItems, endIndex),
+    previousPage: page > 1 ? page - 1 : null,
+    nextPage:     page < totalPages ? page + 1 : null,
+  };
 }
 
-module.exports = { paginate }
+module.exports = { paginate };

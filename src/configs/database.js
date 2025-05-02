@@ -1,10 +1,8 @@
-// src/db.js
 const Database = require('better-sqlite3');
 const db = new Database('dados.db', {
   verbose: console.log
 });
 
-// ativa checagem de FKs
 db.exec(`PRAGMA foreign_keys = ON;`);
 
 db.exec(`

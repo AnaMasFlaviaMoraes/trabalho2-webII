@@ -72,13 +72,42 @@
             </tbody>
         </table>
 
+        <%
+            const { page, totalPages } = data.paged;
+            const filterParam = data.searchNome ? '&searchNome=' + encodeURIComponent(data.searchNome) : '';
+        %>
+
         <div class="pagination">
-            <a href="#"><i class="fas fa-angle-double-left fa-sm"></i></a>
-            <a href="#"><i class="fas fa-angle-double-right fa-sm"></i></a>
+          <% if (page > 1) { %>
+            <a href="/users?page=<%= page-1 %><%= filterParam %>">
+              <i class="fas fa-angle-double-left fa-sm"></i>
+            </a>
+          <% } else { %>
+            <a class="disabled">
+              <i class="fas fa-angle-double-left fa-sm"></i>
+            </a>
+          <% } %>
+        
+          <% for (let p = 1; p <= totalPages; p++) { %>
+            <% if (p === page) { %>
+              <a class="current"><%= p %></a>
+            <% } else { %>
+              <a href="/users?page=<%= p %><%= filterParam %>"><%= p %></a>
+            <% } %>
+          <% } %>
+            
+          <% if (page < totalPages) { %>
+            <a href="/users?page=<%= page+1 %><%= filterParam %>">
+              <i class="fas fa-angle-double-right fa-sm"></i>
+            </a>
+          <% } else { %>
+            <a class="disabled">
+              <i class="fas fa-angle-double-right fa-sm"></i>
+            </a>
+          <% } %>
         </div>
     </div>
 
-    <!-- Modal de confirmação -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <p>Tem certeza que deseja excluir este usuário?</p>
