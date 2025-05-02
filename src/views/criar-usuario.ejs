@@ -11,30 +11,53 @@
         <div class="navbar-left">
             <h1>Cadastrar Usuário</h1>
         </div>
+        <% if (data.user) { %>
         <div class="navbar-right">
             <a href="/logout" class="logout">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
         </div>
+        <% } else { %>
+        <div class="navbar-right">
+            <a href="/login" class="logout">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+        <% } %>
     </div>
+
+    <% if (data.errorMessage) { %>
+        <h4><%= data.errorMessage %></h4>
+    <% } %>
 
     <div class="form-container">
         <form action="/addUser" method="POST">
             <label>Nome:</label>
             <input type="text" name="nome" placeholder="Nome" required>
 
-            <label>Username:</label>
-            <input type="text" name="username" placeholder="Username" required>
-
             <label>CPF:</label>
             <input type="text" name="cpf" placeholder="000.000.000-00" required>
+
+            <label>Senha:</label>
+            <input type="password" name="senha" placeholder="Senha" required>
+
+            <label>Perfil</label>
+            <select name="role" required>
+            <% if (data.firstUser) { %>
+                <option value="ADMIN" selected>Admin</option>
+                <option value="CLIENTE" disabled>Cliente</option>
+              <% } else { %>
+                <option value="ADMIN">Admin</option>
+                <option value="CLIENTE" selected>Cliente</option>
+              <% } %>
+            </select>
 
             <div class="multi-field" id="telefonesContainer">
                 <h3>Telefones</h3>
                 <div class="item">
                     <input type="text" name="telefones[0].numero" placeholder="(00) 90000-0000" required>
                     <label class="check">
-                        <input type="radio" name="telefonePrincipal" checked> Principal
+                        <input type="radio" name="telefonePrincipal" value="0" checked> Principal
                     </label>
                 </div>
                 <button type="button" onclick="addTelefone()">Adicionar Telefone</button>
@@ -45,7 +68,7 @@
                 <div class="item">
                     <input type="email" name="emails[0].endereco" placeholder="fulano@email.com" required>
                     <label class="check">
-                        <input type="radio" name="emailPrincipal" checked> Principal
+                        <input type="radio" name="emailPrincipal" value="0" checked> Principal
                     </label>
                 </div>
                 <button type="button" onclick="addEmail()">Adicionar Email</button>
@@ -53,7 +76,21 @@
 
             <button type="submit">Cadastrar usuário</button>
         </form>
+        <div class="action-buttons">
+            <a href="/users" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+        </div>
     </div> 
+
+    <% if (failed) { %>
+        <div id="failedLoginModal" class="modal" style="display: flex;">
+            <div class="modal-content">
+                <p><%= data.error %></p>
+                <div class="modal-buttons">
+                    <button class="cancel" onclick="closeModal()">Fechar</button>
+                </div>
+            </div>
+        </div>
+    <% } %>
 
     <script>
         function addTelefone() {
@@ -97,8 +134,8 @@
         }
 
     function maskCPF(input) {
-        let value = input.value.replace(/\D/g, ''); // remove tudo que não é número
-        value = value.slice(0, 11); // limita a 11 dígitos
+        let value = input.value.replace(/\D/g, ''); 
+        value = value.slice(0, 11); 
 
         value = value
             .replace(/(\d{3})(\d)/, '$1.$2')
@@ -129,6 +166,11 @@
             input.addEventListener('input', () => maskTelefone(input));
         });
     });
+
+    function closeModal() {
+        const modal = document.getElementById('failedLoginModal');
+        modal.style.display = 'none';
+      }
 
     </script> 
 </body>

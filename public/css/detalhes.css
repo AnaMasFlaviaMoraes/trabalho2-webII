@@ -181,7 +181,6 @@ button[type="submit"]:hover {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-weight: bold;
     color: white;
 }
 
@@ -195,4 +194,18 @@ button[type="submit"]:hover {
 
 .excluir {
     background-color: #dc3545;
+    font-size: 12pt;
+}
+
+
+a.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: default;
+  }
+
+.excluir.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: default;
 }

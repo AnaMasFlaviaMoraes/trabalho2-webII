@@ -20,19 +20,17 @@
 
     <div class="form-container">
         <label>Nome:</label>
-        <input type="text" name="nome" value="<%= user.nome %>" readonly>
-        <label>Username:</label>
-        <input type="text" name="username" value="<%= user.username %>" readonly>
+        <input type="text" name="nome" value="<%= user.name %>" readonly>
         <label>CPF:</label>
         <input type="text" value="<%= user.cpf %>" readonly>
         <label>Perfil:</label>
-        <input type="text" value="<%= user.perfil %>" readonly>
+        <input type="text" value="<%= user.role %>" readonly>
         <div class="multi-field" id="telefonesContainer">
             <h3>Telefones</h3>
-            <% user.telefones.forEach(function(tel, i) { %>
+            <% user.phones.forEach(function(phone, i) { %>
                 <div class="item">
-                    <input type="text" name="telefones[<%= i %>].numero" value="<%= tel.numero %>" readonly>
-                    <% if (tel.principal) { %>
+                    <input type="text" name="telefones[<%= i %>].numero" value="<%= phone.number %>" readonly>
+                    <% if (phone.principal) { %>
                         <label class="check">
                             <input type="radio" name="telefonePrincipal" value="<%= i %>" checked> Principal
                         </label>
@@ -44,26 +42,31 @@
             <h3>E-mails</h3>
             <% user.emails.forEach(function(email, i) { %>
                 <div class="item">
-                    <input type="email" name="emails[<%= i %>].endereco" value="<%= email.endereco %>" required>
-                    <% if (email.principal) { %>
+                    <input type="email" name="emails[<%= i %>].email" value="<%= email.email %>" required>
+                    <% if (email.is_principal == 1 || email.is_principal === 'true') { %>
                         <label class="check">
-                            <input type="radio" name="emailPrincipal" value="<%= i %>" <%= email.principal ? 'checked' : '' %>> Principal
+                            <input type="radio" name="emailPrincipal" value="<%= i %>" <%= email.is_principal ? 'checked' : '' %>> Principal
                         </label>
                     <% } %>
                 </div>
             <% }) %>
         </div>
         <div class="action-buttons">
-            <a href="/users" class="btn voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
-            <a href="/user/<%= user.id %>/edit" class="btn editar"><i class="fas fa-edit"></i> Editar</a>
-            <button class="btn excluir" onclick="openUserModal('<%= user.id %>', '<%= user.nome %>')">
+            <% 
+                const isAdmin   = loggedUser.role == 'ADMIN';
+                const isSelf    = loggedUser.id == userId;
+                const canEdit   = isAdmin || isSelf;
+                const canDelete = isAdmin && (user.role != 'ADMIN' || isSelf);
+            %>
+            <a href="/users" class="btn voltar <%= user.role %>"><i class="fas fa-arrow-left"></i> Voltar</a>
+            <a href="/user/<%= user.id %>/edit" class="btn editar <%= canEdit ? '' : 'disabled' %>"><i class="fas fa-edit"></i> Editar</a>
+            <button class="btn excluir <%= canDelete ? '' : 'disabled' %>" onclick="openUserModal('<%= user.id %>', '<%= user.name %>')">
                 <i class="fas fa-trash"></i> Excluir
             </button>
         </div>
         
     </div>
 
-    <!-- Modal de confirmação -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <p id="modalMessage"></p>

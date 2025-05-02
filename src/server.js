@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const userRouter = require('./routes/user.routes.js');
+const userRouter = require('./routes/user-routes.js');
 const session = require('express-session');
 
 const app = express();
@@ -17,28 +17,6 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
-
-// app.get('/', (req, res) => {
-//     const users = [
-//         {
-//             id: 1,
-//             nome: "Ana Flávia",
-//             username: "anamasflavia",
-//             perfil: "admin",
-//             telefones: [{ numero: "(11) 99999-9999", principal: true }],
-//             emails: [{ endereco: "ana@email.com", principal: true }]
-//         },
-//         {
-//             id: 2,
-//             nome: "Carlos Silva",
-//             username: "carlossilva",
-//             perfil: "cliente",
-//             telefones: [{ numero: "(21) 98888-7777", principal: true }],
-//             emails: [{ endereco: "carlos@email.com", principal: true }]
-//         }
-//     ];
-//     res.render('listar-usuarios', { users });
-// });
 
 app.use(userRouter);
 
